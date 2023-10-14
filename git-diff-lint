@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# source: https://github.com/codeocelot/git-diff-lint
+
+LINT=${LINT:="ruff"}
+BRANCH=${BRANCH:="main"}
+EXT=${EXT:="\.py$"}
+
+while getopts ":x:b:e:h" opt; do
+  case $opt in
+    x)
+      LINT=$OPTARG
+      ;;
+    b)
+      BRANCH=$OPTARG
+      ;;
+    e)
+      EXT=$OPTARG
+      ;;
+    h)
+      echo -e "Usage: git-diff-lint [options]\n"
+      echo "Options:"
+      echo -e "  -x\t lint command (default: ruff)"
+      echo -e "  -b\t parent branch (default: main)"
+      echo -e "  -e\t file extension regex, (default: .py)"
+      echo -e "  -h\t show this help message and exit"
+      exit 0
+      ;;
+    \?)
+      echo -e "Invalid option: $OPTARG \ngit-diff-lint -h for help" >&2
+      exit 1
+      ;;
+    :)
+      echo -e "Option -$OPTARG requires an argument\ngit-diff-lint -h for help" >&2
+      exit 1
+      ;;
+  esac
+done
+
+DIFF=$(git diff --cached --name-only --diff-filter=d "$(git merge-base HEAD "$BRANCH")" | grep -E "$EXT")
+if [ -n "$DIFF" ]
+then
+  $LINT $DIFF
+fi
