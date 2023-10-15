@@ -40,12 +40,12 @@ darker --revision origin/main .
 
 Check for potential code flaws:
 ```shell
-ruff check $(git diff --cached --name-only --diff-filter=d $(git merge-base HEAD master) | grep -E \.py$)
+ruff check $(git diff --name-only --diff-filter=d $(git merge-base HEAD master) | grep -E \.py$)
 ```
 
 Try to fix found code flaws:
 ```shell
-ruff --fix --silent --exit-zero $(git diff --cached --name-only --diff-filter=d $(git merge-base HEAD master) | grep -E \.py$)
+ruff --fix --silent --exit-zero $(git diff --name-only --diff-filter=d $(git merge-base HEAD master) | grep -E \.py$)
 ```
 
 ### Automation commands
